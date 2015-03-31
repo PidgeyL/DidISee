@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Tool to report new IPs
+# Tool to report new items
 #
 # Software is free software released under the "Modified BSD license"
 #
@@ -36,22 +36,22 @@ def createDB():
 
 def checkNew(files):
   global DATABASE
-  ips=[]
+  items=[]
   for f in files:
     data = open(f,'r')
     for line in [x.strip('\n').strip() for x in data.readlines()]:
-      ips.append(line)
+      items.append(line)
     data.close()
-  ips=list(set(ips))
+  items=list(set(items))
   con = sql.connect(DATABASE)
   with con:
     cur=con.cursor()
     if sys.version_info < (3, 0):
-      oldIPs=[x[0].encode('ascii','ignore') for x in cur.execute("SELECT %s FROM %ss"%(FIELD,FIELD)).fetchall()]
+      oldItems=[x[0].encode('ascii','ignore') for x in cur.execute("SELECT %s FROM %ss"%(FIELD,FIELD)).fetchall()]
     else:
-      oldIPs=[x[0] for x in cur.execute("SELECT %s FROM %ss"%(FIELD,FIELD)).fetchall()]
-    newRecords=list(set(ips)-set(oldIPs))
-    reseen=list(set(oldIPs)&set(ips))
+      oldItems=[x[0] for x in cur.execute("SELECT %s FROM %ss"%(FIELD,FIELD)).fetchall()]
+    newRecords=list(set(items)-set(oldItems))
+    reseen=list(set(oldItems)&set(items))
     now = datetime.now()
     newRecords=[(x, now, now) for x in newRecords]
     prefix = "New %s: "%FIELD if args.v else ""
